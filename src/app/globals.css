@@ -1,26 +1,459 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --mercantile-black: #05070B;
+    --mercantile-charcoal: #0B0F19;
+    --mercantile-graphite: #121826;
+    --mercantile-card: #162033;
+    --mercantile-border: rgba(255, 255, 255, 0.08);
+    --mercantile-border-light: rgba(255, 255, 255, 0.14);
+    --mercantile-gold: #D4AF37;
+    --mercantile-gold-glow: rgba(212, 175, 55, 0.35);
+    --mercantile-gold-dark: #9A7B20;
+    --mercantile-cyan: #00F0FF;
+    --mercantile-cyan-glow: rgba(0, 240, 255, 0.35);
+    --mercantile-amber: #F59E0B;
+    --mercantile-profit: #05CD99;
+    --mercantile-loss: #EF4444;
+    --mercantile-silver: #94A3B8;
+    --mercantile-white: #F8FAFC;
+    color-scheme: dark;
+  }
+
+  * {
+    box-sizing: border-box;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    background-color: var(--mercantile-black);
+    color: var(--mercantile-white);
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    min-height: 100vh;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Tabular lining numerical and monospace typography */
+.font-mono-tech,
+.font-numeric {
+  font-family: var(--font-mono), "JetBrains Mono", monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-variant-numeric: tabular-nums;
 }
+
+/* Dedicated Typography Hierarchy Utility Classes */
+.text-display {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.text-headline {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.text-subhead {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+.text-body-pro {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.9375rem; /* 15px */
+  line-height: 1.625;
+  color: #CBD5E1;
+}
+
+.text-caption-pro {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.4;
+  color: #94A3B8;
+}
+
+.text-badge-tech {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.text-financial {
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Background Grids and Atmospheric Depth */
+.bg-terminal-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+.bg-terminal-dots {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-radial-vignette {
+  background: radial-gradient(circle at 50% 0%, rgba(20, 30, 50, 0.45) 0%, rgba(5, 7, 11, 0.95) 75%);
+}
+
+/* Scanline Overlay (restrained, 2% opacity) */
+.scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.01),
+    rgba(0, 255, 0, 0.005),
+    rgba(0, 0, 255, 0.01)
+  );
+  background-size: 100% 3px, 4px 100%;
+}
+
+/* Glassmorphism Presets */
+.glass-panel {
+  background: rgba(11, 15, 25, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-gold {
+  background: rgba(14, 18, 28, 0.82);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.06);
+}
+
+.glass-panel-cyan {
+  background: rgba(10, 16, 26, 0.82);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.06);
+}
+
+/* HUD Tactical Corner Markers */
+.hud-corners {
+  position: relative;
+}
+
+.hud-corners::before,
+.hud-corners::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  pointer-events: none;
+}
+
+.hud-corners::before {
+  top: 0;
+  left: 0;
+  border-top: 1.5px solid rgba(212, 175, 55, 0.6);
+  border-left: 1.5px solid rgba(212, 175, 55, 0.6);
+}
+
+.hud-corners::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1.5px solid rgba(212, 175, 55, 0.6);
+  border-right: 1.5px solid rgba(212, 175, 55, 0.6);
+}
+
+/* Custom Institutional Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #05070B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1C273E;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes goldShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gold-shimmer {
+  background-size: 200% auto;
+  animation: goldShimmer 5s ease-in-out infinite;
+}
+
+@keyframes beamScan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+.animate-beam-scan {
+  animation: beamScan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes floatGlow {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.12; }
+  50% { transform: translateY(-10px) scale(1.08); opacity: 0.25; }
+}
+
+.animate-float-glow {
+  animation: floatGlow 6s ease-in-out infinite;
+}
+
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 45s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ==================================================
+   DEDICATED MOTION DESIGN SYSTEM
+   ================================================== */
+
+/* Cross-Document View Transitions (Progressive Enhancement) */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: 180ms ease-out both pageFadeOut;
+  }
+
+  ::view-transition-new(root) {
+    animation: 220ms ease-in both pageFadeIn;
+  }
+}
+
+@keyframes pageFadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.995); }
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Page Enter Transition (Component-level fallback) */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-enter {
+  animation: pageEnter 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+/* Natural Chart Line-Drawing */
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 2500;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-line {
+  stroke-dasharray: 2500;
+  animation: drawLine 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: stroke-dashoffset;
+}
+
+/* Natural Chart Gradient Fill Reveal */
+@keyframes fadeInChartArea {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-chart-area {
+  animation: fadeInChartArea 800ms ease-out forwards;
+  will-change: opacity, transform;
+}
+
+/* Smooth Numerical Flashes */
+@keyframes numFlashGreen {
+  0% { color: #05CD99; text-shadow: 0 0 10px rgba(5, 205, 153, 0.5); }
+  100% { text-shadow: none; }
+}
+
+@keyframes numFlashRed {
+  0% { color: #EF4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+  100% { text-shadow: none; }
+}
+
+@keyframes numFlashGold {
+  0% { color: #D4AF37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+  100% { text-shadow: none; }
+}
+
+.num-flash-gain {
+  animation: numFlashGreen 700ms ease-out;
+}
+
+.num-flash-loss {
+  animation: numFlashRed 700ms ease-out;
+}
+
+.num-flash-neutral {
+  animation: numFlashGold 700ms ease-out;
+}
+
+/* Leaderboard Ranking Shift Pulse */
+@keyframes rankShiftPulse {
+  0% {
+    background-color: rgba(212, 175, 55, 0.22);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+    transform: scale(1.002);
+  }
+  50% {
+    background-color: rgba(212, 175, 55, 0.12);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+
+.animate-rank-shift {
+  animation: rankShiftPulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tactile Microinteractions */
+.btn-tactile {
+  transition: transform 120ms ease, box-shadow 150ms ease, filter 150ms ease, border-color 150ms ease;
+  will-change: transform;
+}
+
+.btn-tactile:hover {
+  filter: brightness(1.08);
+}
+
+.btn-tactile:active {
+  transform: scale(0.975);
+}
+
+.btn-tactile:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #05070B, 0 0 0 4px #D4AF37;
+}
+
+/* Card Interactive Hover Elevation */
+.card-interactive {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease, box-shadow 220ms ease;
+  will-change: transform, border-color, box-shadow;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 55, 0.05);
+}
+
+/* Universal Form Inputs Focus Glow */
+input[type="text"],
+input[type="search"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 1px #D4AF37, 0 0 14px rgba(212, 175, 55, 0.16);
+}
+
+/* Accessibility: Prefers-Reduced-Motion Guard */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-page-enter,
+  .animate-draw-line,
+  .animate-chart-area,
+  .num-flash-gain,
+  .num-flash-loss,
+  .num-flash-neutral,
+  .animate-rank-shift {
+    animation: none !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+    stroke-dasharray: none !important;
+    opacity: 1 !important;
+  }
+}
+
