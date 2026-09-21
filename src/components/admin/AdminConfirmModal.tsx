@@ -269,6 +269,7 @@ export const AdminConfirmModal: React.FC<AdminConfirmModalProps> = ({
           </div>
         </GlassPanel>
       </div>
+      </div>
     </div>
   );
 };
