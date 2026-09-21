@@ -86,6 +86,8 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
         </div>
       </GlassPanel>
 
+      {/* 2. COMPETITION STATE */}
+      <GlassPanel hudCorners className="p-4 flex flex-col justify-between space-y-2.5">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono-tech uppercase font-bold text-[#64748B] tracking-wider">
             COMPETITION STATE
