@@ -113,25 +113,26 @@ export const AdminConfirmModal: React.FC<AdminConfirmModalProps> = ({
   const Icon = severityConfig.icon;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-      <div
-        className="fixed inset-0"
-        onClick={() => {
-          if (!isLoading) onClose();
-        }}
-        aria-hidden="true"
-      />
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md animate-fade-in">
+      <div className="flex min-h-full items-center justify-center p-4 py-12">
+        <div
+          className="fixed inset-0"
+          onClick={() => {
+            if (!isLoading) onClose();
+          }}
+          aria-hidden="true"
+        />
 
-      <div className={clsx("relative w-full max-w-lg z-10 transition-all")}>
-        <GlassPanel
-          variant="solid"
-          hudCorners
-          className={clsx(
-            "p-6 border bg-[#0A0E1A] space-y-5 max-h-[90vh] overflow-y-auto",
-            severityConfig.border,
-            severityConfig.glow
-          )}
-        >
+        <div className={clsx("relative w-full max-w-lg z-10 transition-all")}>
+          <GlassPanel
+            variant="solid"
+            hudCorners
+            className={clsx(
+              "p-6 border bg-[#0A0E1A] space-y-5",
+              severityConfig.border,
+              severityConfig.glow
+            )}
+          >
           {/* Top Bar with Icon and Title */}
           <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
             <div className="flex items-start gap-3">
