@@ -127,7 +127,7 @@ export const AdminConfirmModal: React.FC<AdminConfirmModalProps> = ({
           variant="solid"
           hudCorners
           className={clsx(
-            "p-6 border bg-[#0A0E1A] space-y-5",
+            "p-6 border bg-[#0A0E1A] space-y-5 max-h-[90vh] overflow-y-auto",
             severityConfig.border,
             severityConfig.glow
           )}
