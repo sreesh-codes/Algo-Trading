@@ -4,7 +4,6 @@ import React from "react";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import {
   Trophy,
-  Compass,
   Users,
   Send,
   PlaySquare,
@@ -15,14 +14,27 @@ import {
   StopCircle,
 } from "lucide-react";
 import { clsx } from "clsx";
-import { AdminOverviewMetrics } from "@/data/mock/admin";
+
+export interface LiveMetrics {
+  teamsCount: number;
+  submissionsCount: number;
+  runningBacktests: number;
+  completedBacktests: number;
+  competitionStatus: "REGISTRATION_OPEN" | "ACTIVE" | "PAUSED" | "COMPLETED";
+}
 
 interface AdminOverviewGridProps {
-  metrics: AdminOverviewMetrics;
+  metrics: LiveMetrics;
 }
 
 export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics }) => {
-  const roundStatusConfig = {
+  const statusConfig = {
+    REGISTRATION_OPEN: {
+      label: "REGISTRATION OPEN",
+      bg: "bg-[#00F0FF]/15 text-[#00F0FF] border-[#00F0FF]/40",
+      dot: "bg-[#00F0FF]",
+      icon: Clock,
+    },
     ACTIVE: {
       label: "ACTIVE",
       bg: "bg-[#05CD99]/15 text-[#05CD99] border-[#05CD99]/40",
@@ -37,19 +49,18 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
     },
     COMPLETED: {
       label: "COMPLETED",
-      bg: "bg-[#00F0FF]/15 text-[#00F0FF] border-[#00F0FF]/40",
-      dot: "bg-[#00F0FF]",
+      bg: "bg-[#A855F7]/15 text-[#A855F7] border-[#A855F7]/40",
+      dot: "bg-[#A855F7]",
       icon: StopCircle,
     },
-    SCHEDULED: {
-      label: "SCHEDULED",
-      bg: "bg-[#94A3B8]/15 text-[#94A3B8] border-white/20",
-      dot: "bg-[#94A3B8]",
-      icon: Clock,
-    },
-  }[metrics.roundStatus];
+  }[metrics.competitionStatus] || {
+    label: "UNKNOWN",
+    bg: "bg-gray-500/15 text-gray-500 border-gray-500/40",
+    dot: "bg-gray-500",
+    icon: Clock,
+  };
 
-  const StatusIcon = roundStatusConfig.icon;
+  const StatusIcon = statusConfig.icon;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
@@ -62,42 +73,36 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
           <Trophy size={14} className="text-[#D4AF37]" />
         </div>
         <div>
-          <div className="text-sm font-bold text-white font-sans truncate" title={metrics.activeCompetition}>
-            {metrics.activeCompetition}
+          <div className="text-sm font-bold text-white font-sans truncate" title="DUBAI 2035 — The Mercantile">
+            DUBAI 2035 — The Mercantile
           </div>
           <div className="text-[11px] text-[#94A3B8] font-mono-tech truncate mt-0.5">
-            {metrics.seasonEdition}
+            SEASON IV
           </div>
         </div>
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono-tech text-[#05CD99]">
-          <span>1,500,000 Blitz POOL</span>
-          <span className="text-[#94A3B8]">SEASON IV</span>
+          <span>DIFC ALGO LEAGUE</span>
+          <span className="text-[#94A3B8]">EDITION 2035</span>
         </div>
       </GlassPanel>
 
-      {/* 2. CURRENT ROUND */}
-      <GlassPanel hudCorners className="p-4 flex flex-col justify-between space-y-2.5 border-[#D4AF37]/30">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono-tech uppercase font-bold text-[#64748B] tracking-wider">
-            CURRENT ROUND
+            COMPETITION STATE
           </span>
-          <div className={clsx("px-2 py-0.5 rounded text-[9px] font-mono-tech font-bold border flex items-center gap-1", roundStatusConfig.bg)}>
-            <span className={clsx("w-1.5 h-1.5 rounded-full", roundStatusConfig.dot)} />
-            {roundStatusConfig.label}
+          <div className={clsx("px-2 py-0.5 rounded text-[9px] font-mono-tech font-bold border flex items-center gap-1", statusConfig.bg)}>
+            <span className={clsx("w-1.5 h-1.5 rounded-full", statusConfig.dot)} />
+            {statusConfig.label}
           </div>
         </div>
         <div>
-          <div className="text-sm font-bold text-[#D4AF37] font-sans truncate" title={metrics.currentRound}>
-            {metrics.currentRound}
-          </div>
-          <div className="text-[11px] text-[#CBD5E1] font-mono-tech flex items-center gap-1 mt-0.5">
-            <Clock size={11} className="text-[#64748B]" />
-            <span>{metrics.roundStatus === "PAUSED" ? "CLOCK HALTED" : `${metrics.timeRemaining} REMAINING`}</span>
+          <div className="text-sm font-bold text-[#D4AF37] font-sans truncate" title={metrics.competitionStatus}>
+            {metrics.competitionStatus.replace("_", " ")}
           </div>
         </div>
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono-tech text-[#94A3B8]">
-          <span>STAGE 02 / 05</span>
-          <span className="text-[#D4AF37]">THE ARBITRAGE</span>
+          <span>LIFECYCLE</span>
+          <span className="text-[#D4AF37]">CONTROLLER ACTIVE</span>
         </div>
       </GlassPanel>
 
@@ -116,12 +121,12 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
           </div>
           <div className="text-[11px] text-[#05CD99] font-mono-tech flex items-center gap-1 mt-0.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#05CD99]" />
-            <span>{metrics.teamsActiveBots} BOTS CONNECTED</span>
+            <span>ALL BOTS STANDBY</span>
           </div>
         </div>
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono-tech text-[#94A3B8]">
-          <span>TOP TIER: 10 DESKS</span>
-          <span className="text-[#00F0FF]">100% ONLINE</span>
+          <span>LIVE TRACKING</span>
+          <span className="text-[#00F0FF]">CONNECTED</span>
         </div>
       </GlassPanel>
 
@@ -140,12 +145,12 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
           </div>
           <div className="text-[11px] text-[#D4AF37] font-mono-tech flex items-center gap-1 mt-0.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
-            <span>{metrics.submissionsEvaluating} IN EVALUATION</span>
+            <span>IN REPOSITORY</span>
           </div>
         </div>
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono-tech text-[#94A3B8]">
-          <span>ACTIVE DEPLOYED: 24</span>
-          <span className="text-[#05CD99]">118 PASS</span>
+          <span>ACCEPTED</span>
+          <span className="text-[#05CD99]">ALL CLEAR</span>
         </div>
       </GlassPanel>
 
@@ -163,12 +168,12 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
             <span className="text-xs text-[#64748B] font-normal ml-1">ACTIVE</span>
           </div>
           <div className="text-[11px] text-[#A855F7] font-mono-tech truncate mt-0.5">
-            {metrics.backtestThroughput}
+            {metrics.completedBacktests} COMPLETED
           </div>
         </div>
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono-tech text-[#94A3B8]">
-          <span>AVG TIME: 8.4s</span>
-          <span className="text-[#A855F7]">16 NODES</span>
+          <span>CLUSTER ONLINE</span>
+          <span className="text-[#A855F7]">WORKERS STANDBY</span>
         </div>
       </GlassPanel>
 
@@ -183,14 +188,14 @@ export const AdminOverviewGrid: React.FC<AdminOverviewGridProps> = ({ metrics })
         <div>
           <div className="text-xl font-bold text-[#05CD99] font-mono-tech flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#05CD99] animate-pulse" />
-            {metrics.systemStatus}
+            OPTIMAL
           </div>
           <div className="text-[11px] text-[#94A3B8] font-mono-tech mt-0.5">
-            UPTIME {metrics.uptime}
+            ALL SYSTEMS NOMINAL
           </div>
         </div>
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono-tech text-[#05CD99]">
-          <span>LATENCY: {metrics.latencyMs}ms</span>
+          <span>TELEMETRY LIVE</span>
           <span className="text-white">DIFC CORE</span>
         </div>
       </GlassPanel>

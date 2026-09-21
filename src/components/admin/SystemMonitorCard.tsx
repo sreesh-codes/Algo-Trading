@@ -35,18 +35,36 @@ export const SystemMonitorCard: React.FC<SystemMonitorCardProps> = ({
         ...prev,
         workers: {
           ...prev.workers,
-          cpuPercent: Math.round((65 + Math.random() * 8) * 10) / 10,
-          ramGb: Math.round((43 + Math.random() * 3) * 10) / 10,
+          active: 0,
+          total: 0,
+          cpuPercent: 0,
+          ramGb: 0,
+          maxRamGb: 64,
+          tempMilliKelvin: 0,
         },
+        queues: prev.queues.map(q => ({ ...q, pendingCount: 0, avgLatencyMs: 0 })),
         backtests: {
           ...prev.backtests,
-          runningJobs: Math.floor(34 + Math.random() * 7),
-          completedToday: prev.backtests.completedToday + 1,
+          runningJobs: 0,
+          queuedJobs: 0,
+          completedToday: 0,
+          peakThroughputPerMin: 0,
+          avgDurationSec: 0,
         },
         activeUsers: {
           ...prev.activeUsers,
-          spectatorTerminals: Math.floor(98 + Math.random() * 10),
+          totalSessions: 0,
+          algorithmicBots: 0,
+          spectatorTerminals: 0,
+          activeAdminConsoles: 1,
         },
+        errorRate: {
+          ...prev.errorRate,
+          ratePercent: 0,
+          errorsLastHour: 0,
+          packetLossRate: 0,
+          recentIncidents: ["Systems initialized. Zero errors."],
+        }
       }));
       setIsRefreshing(false);
     }, 400);
