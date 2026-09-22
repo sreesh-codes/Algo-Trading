@@ -12,6 +12,7 @@ WORKDIR /app
 # Copy the core engine
 COPY backtester/ /app/backtester/
 COPY participant_runtime/ /app/participant_runtime/
+COPY mercantile_sdk/ /app/mercantile_sdk/
 
 # Ensure all files are owned by root but readable by sandboxuser
 RUN chown -R root:root /app && chmod -R 755 /app

@@ -71,21 +71,28 @@ class BacktestEngine:
             if hasattr(self.strategy, '_flush_orders'):
                 new_orders = self.strategy._flush_orders(event.timestamp)
                 
-            # Handle legacy dictionary returns from on_tick
-            if order_dict and isinstance(order_dict, dict) and order_dict.get("action") == "ORDER_SUBMIT":
+            # Handle dictionary or list of dictionaries returns from on_tick
+            if order_dict:
                 from .models import Order, OrderSide, OrderType
                 import uuid
-                side = OrderSide.BUY if order_dict.get("side") == "BUY" else OrderSide.SELL
-                legacy_order = Order(
-                    id=str(uuid.uuid4()),
-                    symbol=order_dict.get("symbol", event.symbol),
-                    side=side,
-                    order_type=OrderType.LIMIT,
-                    price=order_dict.get("price", 0.0),
-                    quantity=order_dict.get("quantity", 0),
-                    timestamp=event.timestamp
-                )
-                new_orders.append(legacy_order)
+                
+                # Convert a single dict to a list for uniform processing
+                raw_orders = order_dict if isinstance(order_dict, list) else [order_dict]
+                
+                for raw_order in raw_orders:
+                    if isinstance(raw_order, dict):
+                        # Accept either {"action": "ORDER_SUBMIT"} or just {"side": "BUY", "quantity": 10}
+                        side = OrderSide.BUY if raw_order.get("side") == "BUY" else OrderSide.SELL
+                        legacy_order = Order(
+                            id=str(uuid.uuid4()),
+                            symbol=raw_order.get("symbol") or raw_order.get("asset") or event.symbol,
+                            side=side,
+                            order_type=OrderType.LIMIT,
+                            price=raw_order.get("price", 0.0),
+                            quantity=raw_order.get("quantity", 0),
+                            timestamp=event.timestamp
+                        )
+                        new_orders.append(legacy_order)
 
             for order in new_orders:
                 if getattr(order, 'status', None) == "REQUEST_CANCEL":
@@ -135,10 +142,21 @@ def run_backtest_cli(strategy_path: str, dataset_path: str, symbol: str):
     strategy_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(strategy_module)
     
-    if not hasattr(strategy_module, 'MyStrategy'):
-        raise AttributeError("Strategy file must define a class named 'MyStrategy' inheriting from Strategy")
+    import inspect
+    
+    strategy_class = None
+    if hasattr(strategy_module, 'MyStrategy'):
+        strategy_class = strategy_module.MyStrategy
+    else:
+        for name, obj in inspect.getmembers(strategy_module, inspect.isclass):
+            if hasattr(obj, 'on_tick') and callable(getattr(obj, 'on_tick')):
+                strategy_class = obj
+                break
+                
+    if not strategy_class:
+        raise AttributeError("Strategy file must define a class with an 'on_tick' method")
         
-    strategy_instance = strategy_module.MyStrategy()
+    strategy_instance = strategy_class()
     
     config = CompetitionConfig(starting_cash=100000.0)
     engine = BacktestEngine(config, dataset_path, symbol, strategy_instance)

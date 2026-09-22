@@ -28,10 +28,21 @@ def run():
         strategy_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(strategy_module)
         
-        if not hasattr(strategy_module, 'MyStrategy'):
-            raise AttributeError("Strategy file must define a class named 'MyStrategy' inheriting from Strategy")
+        import inspect
+        
+        strategy_class = None
+        if hasattr(strategy_module, 'MyStrategy'):
+            strategy_class = strategy_module.MyStrategy
+        else:
+            for name, obj in inspect.getmembers(strategy_module, inspect.isclass):
+                if hasattr(obj, 'on_tick') and callable(getattr(obj, 'on_tick')):
+                    strategy_class = obj
+                    break
+                    
+        if not strategy_class:
+            raise AttributeError("Strategy file must define a class with an 'on_tick' method")
             
-        strategy_instance = strategy_module.MyStrategy()
+        strategy_instance = strategy_class()
         
         # We can pass custom configuration via env vars or hardcode for now
         config = CompetitionConfig(starting_cash=100000.0)

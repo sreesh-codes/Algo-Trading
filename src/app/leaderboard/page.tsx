@@ -29,15 +29,40 @@ export default function LeaderboardPage() {
   const [sortField, setSortField] = useState<SortField>("score");
   const [recentlyMoved, setRecentlyMoved] = useState<Set<string>>(new Set());
   const [lastUpdatedTime, setLastUpdatedTime] = useState<string>("14:32:17 GST");
-  const [remainingSeconds, setRemainingSeconds] = useState<number>(3 * 3600 + 17 * 60 + 42); // 03:17:42
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
+  const [isTimerInitialized, setIsTimerInitialized] = useState(false);
+
+  // Fetch real competition end time
+  useEffect(() => {
+    async function fetchStatus() {
+      try {
+        const res = await fetch("/api/competition/status");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.end) {
+            const end = new Date(data.end).getTime();
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((end - now) / 1000));
+            setRemainingSeconds(diff);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch competition status", err);
+      } finally {
+        setIsTimerInitialized(true);
+      }
+    }
+    fetchStatus();
+  }, []);
 
   // Live countdown timer for round remaining time
   useEffect(() => {
+    if (!isTimerInitialized) return;
     const timer = setInterval(() => {
       setRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isTimerInitialized]);
 
   const formattedRemainingTime = useMemo(() => {
     const hours = Math.floor(remainingSeconds / 3600);

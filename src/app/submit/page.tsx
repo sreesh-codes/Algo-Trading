@@ -60,14 +60,14 @@ export default function SubmitPage() {
 
   // Compute next version string
   const nextVersion = useMemo(() => {
-    if (!history.length) return "v12";
+    if (!history.length) return "v1";
     // Look at current active or highest version
     const activeItem = history.find((h) => h.status === "ACTIVE");
     if (activeItem) return activeItem.version;
     const highest = history.reduce((max, item) => {
       const num = parseInt(item.version.replace("v", ""), 10);
       return isNaN(num) ? max : Math.max(max, num);
-    }, 12);
+    }, 0);
     return `v${highest}`;
   }, [history]);
 
@@ -89,7 +89,7 @@ export default function SubmitPage() {
     const highestNum = history.reduce((max, item) => {
       const num = parseInt(item.version.replace("v", ""), 10);
       return isNaN(num) ? max : Math.max(max, num);
-    }, 12);
+    }, 0);
     const newVersionTag = `v${highestNum + 1}`;
 
     const newRecord = await MercantileApi.submission.executeSubmission({

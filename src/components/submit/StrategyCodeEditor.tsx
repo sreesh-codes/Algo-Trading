@@ -264,7 +264,7 @@ export const StrategyCodeEditor: React.FC<StrategyCodeEditorProps> = ({
             Upload or Edit Strategy Algorithm
           </h2>
           <p className="text-sm text-slate-400 mt-1">
-            Python 3.12 entrypoint implementing <code className="text-slate-300 font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded border border-white/10">class MyStrategy.on_tick(market)</code>
+            Python 3.12 entrypoint implementing <code className="text-slate-300 font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded border border-white/10">class [YourName]: def on_tick(self, market):</code>
           </p>
         </div>
 
@@ -417,7 +417,7 @@ export const StrategyCodeEditor: React.FC<StrategyCodeEditorProps> = ({
             <span className="text-slate-500">Encoding: UTF-8 LF</span>
             <span className="text-slate-600">|</span>
             <span className="text-slate-400">
-              Entry: <span className="text-[#D4AF37]">class MyStrategy.on_tick</span>
+              Entry: <span className="text-[#D4AF37]">class.on_tick</span>
             </span>
           </div>
         </div>

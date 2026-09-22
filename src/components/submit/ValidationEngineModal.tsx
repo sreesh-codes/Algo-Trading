@@ -35,7 +35,7 @@ const VALIDATION_STAGES: ValidationStepDef[] = [
   {
     stage: "CHECKING API",
     title: "CHECKING API",
-    description: "Validating MyStrategy.on_tick(market) interface and order payload schemas.",
+    description: "Validating strategy on_tick(market) interface and order payload schemas.",
     logDetail: "[API] Verified signature on_tick(self, market) -> Dict[str, Any]. Order types: IOC LIMIT.",
   },
   {

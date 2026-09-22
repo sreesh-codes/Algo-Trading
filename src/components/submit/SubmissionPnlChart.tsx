@@ -10,7 +10,7 @@ interface SubmissionPnlChartProps {
 export function SubmissionPnlChart({ submission }: SubmissionPnlChartProps) {
   const data = useMemo(() => {
     if (submission?.rawResult?.equityCurve && Array.isArray(submission.rawResult.equityCurve) && submission.rawResult.equityCurve.length > 0) {
-      return submission.rawResult.equityCurve.map((val: any) => Number(val));
+      return submission.rawResult.equityCurve.map((val: any) => Number(val.pnl ?? val.equity ?? 0));
     }
     // Fallback if no real data
     let pnl = 0;

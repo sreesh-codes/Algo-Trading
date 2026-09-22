@@ -390,7 +390,7 @@ plt.show()`}</pre>
                 To submit an algorithm to the DMX-35 execution engine, it must be formatted in a specific way using <strong>Object-Oriented Programming (OOP)</strong>.
               </p>
               <p>
-                Think of OOP like building a blueprint. You are defining a "Class" (the blueprint) that the exchange will use to build your trading bot. The exchange engine expects your class to be named <code>MyStrategy</code> and it expects specific "methods" (functions that belong to the class) to exist.
+                Think of OOP like building a blueprint. You are defining a "Class" (the blueprint) that the exchange will use to build your trading bot. The exchange engine expects your class to define an <code>on_tick</code> method (the engine will auto-discover your class, so you can name it whatever you like, e.g., <code>MyStrategy</code> or <code>ArbitrageBot</code>).
               </p>
 
               <div className="bg-black/80 rounded-xl p-6 font-mono text-sm text-slate-300 overflow-x-auto border border-white/10 shadow-lg">
@@ -399,38 +399,38 @@ plt.show()`}</pre>
                   <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                   <div className="w-3 h-3 rounded-full bg-[#05CD99]"></div>
                 </div>
-<pre>
-<span className="text-purple-400">class</span> <span className="text-amber-400">MyStrategy</span>:
-    <span className="text-slate-500"># This runs ONCE when the simulation starts.</span>
-    <span className="text-slate-500"># Use it to initialize variables.</span>
-    <span className="text-purple-400">def</span> <span className="text-blue-400">on_start</span>(<span className="text-orange-400">self</span>, md):
-        <span className="text-orange-400">self</span>.position = <span className="text-[#05CD99]">0</span>
-        <span className="text-orange-400">self</span>.total_profit = <span className="text-[#05CD99]">0</span>
-        <span className="text-blue-300">print</span>(<span className="text-green-300">"Algorithm Initialized"</span>)
-
-    <span className="text-slate-500"># This runs EVERY SINGLE TIME the market changes.</span>
-    <span className="text-slate-500"># This is the beating heart of your bot.</span>
-    <span className="text-purple-400">def</span> <span className="text-blue-400">on_tick</span>(<span className="text-orange-400">self</span>, md, order_book):
-        best_bid = order_book.bids[<span className="text-[#05CD99]">0</span>].price
-        best_ask = order_book.asks[<span className="text-[#05CD99]">0</span>].price
-        mid_price = (best_bid + best_ask) / <span className="text-[#05CD99]">2</span>
-
-        <span className="text-slate-500"># Example Logic: Mean Reversion</span>
-        <span className="text-purple-400">if</span> mid_price &lt; <span className="text-[#05CD99]">99.5</span> <span className="text-purple-400">and</span> <span className="text-orange-400">self</span>.position == <span className="text-[#05CD99]">0</span>:
-            <span className="text-slate-500"># Send a BUY order to the exchange</span>
-            md.send_order(<span className="text-green-300">"BUY"</span>, qty=<span className="text-[#05CD99]">10</span>)
-            <span className="text-orange-400">self</span>.position += <span className="text-[#05CD99]">10</span>
-        
-        <span className="text-purple-400">elif</span> mid_price &gt; <span className="text-[#05CD99]">100.5</span> <span className="text-purple-400">and</span> <span className="text-orange-400">self</span>.position &gt; <span className="text-[#05CD99]">0</span>:
-            <span className="text-slate-500"># Sell to take profit</span>
-            md.send_order(<span className="text-green-300">"SELL"</span>, qty=<span className="text-[#05CD99]">10</span>)
-            <span className="text-orange-400">self</span>.position -= <span className="text-[#05CD99]">10</span>
-</pre>
+<div className="whitespace-pre">
+<div><span className="text-purple-400">class</span> <span className="text-amber-400">MyStrategy</span>:</div>
+<div>    <span className="text-slate-500"># This runs ONCE when the simulation starts.</span></div>
+<div>    <span className="text-purple-400">def</span> <span className="text-blue-400">on_start</span>(<span className="text-orange-400">self</span>, md):</div>
+<div>        <span className="text-orange-400">self</span>.position = <span className="text-[#05CD99]">0</span></div>
+<div>        <span className="text-orange-400">self</span>.total_profit = <span className="text-[#05CD99]">0</span></div>
+<div>        <span className="text-blue-300">print</span>(<span className="text-green-300">"Algorithm Initialized"</span>)</div>
+<br />
+<div>    <span className="text-slate-500"># This runs EVERY SINGLE TIME the market changes.</span></div>
+<div>    <span className="text-purple-400">def</span> <span className="text-blue-400">on_tick</span>(<span className="text-orange-400">self</span>, md, order_book):</div>
+<div>        best_bid = order_book.bids[<span className="text-[#05CD99]">0</span>].price</div>
+<div>        best_ask = order_book.asks[<span className="text-[#05CD99]">0</span>].price</div>
+<div>        mid_price = (best_bid + best_ask) / <span className="text-[#05CD99]">2</span></div>
+<br />
+<div>        <span className="text-slate-500"># Example Logic: Mean Reversion</span></div>
+<div>        <span className="text-purple-400">if</span> (mid_price &lt; <span className="text-[#05CD99]">99.5</span> </div>
+<div>            <span className="text-purple-400">and</span> <span className="text-orange-400">self</span>.position == <span className="text-[#05CD99]">0</span>):</div>
+<div>            <span className="text-slate-500"># Send a BUY order to the exchange</span></div>
+<div>            md.send_order(<span className="text-green-300">"BUY"</span>, qty=<span className="text-[#05CD99]">10</span>)</div>
+<div>            <span className="text-orange-400">self</span>.position += <span className="text-[#05CD99]">10</span></div>
+<br />
+<div>        <span className="text-purple-400">elif</span> (mid_price &gt; <span className="text-[#05CD99]">100.5</span> </div>
+<div>              <span className="text-purple-400">and</span> <span className="text-orange-400">self</span>.position &gt; <span className="text-[#05CD99]">0</span>):</div>
+<div>            <span className="text-slate-500"># Sell to take profit</span></div>
+<div>            md.send_order(<span className="text-green-300">"SELL"</span>, qty=<span className="text-[#05CD99]">10</span>)</div>
+<div>            <span className="text-orange-400">self</span>.position -= <span className="text-[#05CD99]">10</span></div>
+</div>
               </div>
 
               <div className="bg-[#0b101d] border-l-4 border-amber-400 rounded-r-xl p-4">
                 <p className="text-sm text-slate-300">
-                  <strong className="text-amber-400">CRITICAL:</strong> If your code does not contain a class named exactly <code>MyStrategy</code> with an <code>on_start</code> and <code>on_tick</code> method, the validation engine will throw an error and reject your submission.
+                  <strong className="text-amber-400">CRITICAL:</strong> Your code must contain a class with an <code>on_tick</code> method, otherwise the validation engine will throw an error and reject your submission. The class name itself can be anything.
                 </p>
               </div>
             </div>

@@ -38,10 +38,10 @@ export async function POST(req: Request) {
     // 2. Create the BacktestJob
     const job = await prisma.backtestJob.create({
       data: {
-        submissionId: submission.id,
-        dataset: dataset || 'DESERT_HYDROGEN',
-        symbol: symbol || 'DESERT_HYDROGEN',
         status: 'QUEUED',
+        dataset: dataset || 'NEXUS_AI',
+        symbol: symbol || 'NEXUS_AI',
+        submissionId: submission.id,
       }
     });
 
@@ -69,6 +69,92 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     console.error('Submission error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const submissions = await prisma.submission.findMany({
+      where: { userId: session.user.id },
+      include: {
+        jobs: {
+          include: {
+            result: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const formattedHistory = submissions.map((sub, index) => {
+      const job = sub.jobs[0];
+      const result = job?.result;
+      const status = job?.status === 'COMPLETED' ? 'ACTIVE' : job?.status === 'FAILED' ? 'FAILED' : 'EVALUATING';
+      
+      const date = new Date(sub.createdAt);
+      const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(
+        date.getDate()
+      ).padStart(2, "0")} — ${String(date.getHours()).padStart(2, "0")}:${String(
+        date.getMinutes()
+      ).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")} GST`;
+
+      let rawResultObj = null;
+      if (result && result.equityCurve) {
+        try {
+          rawResultObj = {
+            ...result,
+            equityCurve: JSON.parse(result.equityCurve)
+          };
+        } catch (e) {
+          rawResultObj = result;
+        }
+      } else if (result) {
+        rawResultObj = result;
+      }
+
+      return {
+        version: `v${index + 1}`,
+        submissionId: job?.id || sub.id,
+        submittedAt: formattedDate,
+        relativeTime: "Just now",
+        roundNumber: 2,
+        roundName: "The Arbitrage",
+        filename: "my_strategy.py",
+        status: status,
+        backtestPnl: result ? result.realizedPnl + result.unrealizedPnl : 0,
+        competitionScore: result ? Math.max(0, 100 - (result.maxDrawdown / 100)) : 0,
+        sharpeRatio: result ? result.sharpeRatio : 0,
+        maxDrawdown: result ? result.maxDrawdown : 0,
+        executionLatencyMs: result ? result.runtime : 0,
+        commitHash: (job?.id || sub.id).substring((job?.id || sub.id).length - 7),
+        auditSummary: result ? `Exchange container executed successfully. Generated ${result.tradeCount} trades.` : `Execution status: ${job?.status}`,
+        rawResult: rawResultObj
+      };
+    });
+
+    // Mark all but the latest COMPLETED one as SUPERSEDED
+    let foundActive = false;
+    for (let i = formattedHistory.length - 1; i >= 0; i--) {
+      if (formattedHistory[i].status === 'ACTIVE') {
+        if (!foundActive) {
+          foundActive = true;
+        } else {
+          formattedHistory[i].status = 'SUPERSEDED';
+        }
+      }
+    }
+
+    return NextResponse.json(formattedHistory.reverse());
+  } catch (error: any) {
+    console.error('Fetch history error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -95,8 +95,9 @@ DMX Engine Interface Version: 3.5.2-GA
 
 import numpy as np
 from typing import Dict, Any, Optional
+from mercantile_sdk.strategy import Strategy
 
-class MyStrategy:
+class MyStrategy(Strategy):
     """
     Continuous Auction Arbitrage Strategy
     Monitors high-frequency order book imbalances across DUNE ENERGY and DIFC-100.
@@ -184,7 +185,18 @@ export const SubmissionApi = {
   },
 
   async getHistory(): Promise<SubmissionVersionRecord[]> {
-    return delay(INITIAL_SUBMISSION_HISTORY);
+    try {
+      const res = await fetch('/api/submissions');
+      if (!res.ok) {
+        console.error("Failed to fetch history");
+        return [];
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching history:", error);
+      return [];
+    }
   },
 
   async getNextVersionNumber(history: SubmissionVersionRecord[]): Promise<string> {
@@ -209,8 +221,8 @@ export const SubmissionApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sourceCode: params.code,
-        dataset: "DESERT_HYDROGEN", // Hardcoded for Round 02 for now
-        symbol: "DESERT_HYDROGEN"
+        dataset: "NEXUS_AI",
+        symbol: "NEXUS_AI"
       })
     });
     

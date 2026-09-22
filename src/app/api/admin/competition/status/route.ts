@@ -24,15 +24,24 @@ export async function POST(req: Request) {
 
     const { status } = result.data;
 
+    // Determine if we need to set start/end times
+    let updateData: any = { competitionStatus: status };
+    if (status === "ACTIVE") {
+      updateData.competitionStart = new Date();
+      updateData.competitionEnd = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    }
+
     // Update global competition settings
     const settings = await prisma.competitionSettings.upsert({
       where: { id: "global" },
-      update: {
-        competitionStatus: status,
-      },
+      update: updateData,
       create: {
         id: "global",
         competitionStatus: status,
+        ...(status === "ACTIVE" ? {
+          competitionStart: new Date(),
+          competitionEnd: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        } : {})
       },
     });
 

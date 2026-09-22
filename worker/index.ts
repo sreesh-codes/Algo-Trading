@@ -65,6 +65,7 @@ const worker = new Worker(
         
         if (code !== 0) {
             console.error(`[Worker] Job ${job.id} failed. Error:`, errorOutput);
+            console.log(`[Worker] DOCKER RAW OUTPUT:`, output);
             try {
                 const parsed = JSON.parse(output.trim().split('\n').pop() || '{}');
                 reject(new Error(parsed.error || 'Unknown execution error'));
@@ -256,7 +257,7 @@ worker.on('failed', async (job, err) => {
             });
         }
     } catch (e) {
-        console.error("Failed to update job status to FAILED in DB");
+        console.error("Failed to update job status to FAILED in DB", e);
     }
   }
 });
